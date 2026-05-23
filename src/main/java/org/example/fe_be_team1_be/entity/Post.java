@@ -22,4 +22,5 @@ public class Post {
 
     private String writer;
 
+    private String quote;
 }
