@@ -12,4 +12,5 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String writer;
+    private String quote;
 }

@@ -5,6 +5,7 @@ import org.example.fe_be_team1_be.dto.PostRequestDto;
 import org.example.fe_be_team1_be.dto.PostResponseDto;
 import org.example.fe_be_team1_be.entity.Post;
 import org.example.fe_be_team1_be.repository.PostRepository;
+import org.example.fe_be_team1_be.util.QuoteProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,19 +14,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-    //게시글 생성
+    private final QuoteProvider quoteProvider;
+
+    //게시글 생성 + 명언 랜덤 반환
     public PostResponseDto createPost(PostRequestDto requestDto) {
+        String randomQuote = quoteProvider.getRandomQuote();
+
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .writer("익명")
+                .quote(randomQuote)
                 .build();
 
         Post savedPost = postRepository.save(post);
         savedPost.setWriter("익명" + savedPost.getId());
-        postRepository.save(savedPost);
-        return toDto(savedPost);
+        postRepository.save(savedPost); //수정 저장
 
+        return PostResponseDto.builder()
+                .id(savedPost.getId())
+                .title(savedPost.getTitle())
+                .content(savedPost.getContent())
+                .writer(savedPost.getWriter())
+                .quote(randomQuote)
+                .build();
     }
 
     //전체 조회
@@ -67,7 +79,9 @@ public class PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .writer(post.getWriter())
+                .quote(post.getQuote())
                 .build();
     }
+
 
 }
